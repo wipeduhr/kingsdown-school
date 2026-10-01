@@ -29,4 +29,4 @@ npm run verify     # check every original word, link, image and video is present
 - 7 broken links on the current site are fixed: four menu/content links to dead pages (term dates, cohort 2030, wellbeing strategy, privacy policy) and partner links missing `https://`.
 - The vacancies list (MyNewTerm) only runs on an https address, so the local preview shows a notice instead.
 - Many uploaded photos are full camera originals (up to 5,712px wide). Resizing them on upload would make pages load much faster.
-- The footer credit reads "Website Design by Ethan Angell" (set in `build.mjs`, footer section).
+- The footer credit reads "Website Design by Ethan Angell", linking to https://github.com/wipeduhr (set in `build.mjs`, footer section).
