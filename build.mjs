@@ -267,7 +267,7 @@ const footer = () => `
   <div class="footer__bar">
     <div class="wrap footer__bar-inner">
       <small>&copy; 2026 Kingsdown School <span aria-hidden="true">|</span> <a href="/info/policies" title="Privacy Policies">Privacy Policies</a></small>
-      <small>Website Design by <a href="https://github.com/wipeduhr" target="_blank" rel="noopener" title="Ethan Angell on GitHub">Ethan Angell</a></small>
+      <small>${PUBLIC ? 'Concept redesign by' : 'Website Design by'} <a href="https://github.com/wipeduhr" target="_blank" rel="noopener" title="Ethan Angell on GitHub">Ethan Angell</a>${PUBLIC ? '. Not the official <a href="https://www.kingsdownschool.co.uk/" rel="noopener">Kingsdown School website</a>.' : ''}</small>
     </div>
   </div>
 </footer>`;
@@ -329,8 +329,7 @@ const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = fa
 </head>
 <body class="${bodyClass}" data-path="${esc(p)}" data-section="${esc(section)}" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="scroll-progress" aria-hidden="true"></div>${PUBLIC ? `
-<div class="concept-bar" role="note"><div class="wrap concept-bar__inner"><span><strong>Concept redesign by Ethan Angell.</strong> This is not the official Kingsdown School website.</span><a href="https://www.kingsdownschool.co.uk/" rel="noopener">Go to the official site <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a></div></div>` : ''}
+<div class="scroll-progress" aria-hidden="true"></div>
 ${header(p)}
 <main id="main">
 ${body}
@@ -484,7 +483,7 @@ const BEATS = [
   { name: 'respect', color: '#C8213F', lines: ['I am kind. I care about others and my surroundings.', 'I encourage and expect others to do the same.'] },
   { name: 'responsibility', color: '#8E50A0', lines: ['We are all part of something special and I am not going to let us down.', 'My attendance really matters.'] },
 ];
-const beats = () => `<section class="beats" aria-labelledby="beats-title">
+const beats = () => `<section class="beats" aria-labelledby="beats-title" data-inview>
   <h2 class="sr-only" id="beats-title">The Kingsdown Beats</h2>
   <div class="beats__row">${BEATS.map((b, i) => `<div class="beat" style="--beat:${b.color};--i:${i}" data-tilt data-depth>
     <div class="beat__stripes" aria-hidden="true"><span></span><span></span></div>

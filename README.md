@@ -15,7 +15,7 @@ npm run deploy     # publish the shareable copy to GitHub Pages (gh-pages branch
 
 Shareable link: https://wipeduhr.github.io/kingsdown-school/
 
-The public copy carries a "Concept redesign by Ethan Angell, not the official website" bar and asks search engines not to index it, so nobody mistakes it for the school's real site. The local preview has neither.
+The public copy's footer reads "Concept redesign by Ethan Angell. Not the official Kingsdown School website." and it asks search engines not to index it, so nobody mistakes it for the school's real site. The local preview has neither.
 
 ## Where things live
 
@@ -34,4 +34,4 @@ The public copy carries a "Concept redesign by Ethan Angell, not the official we
 - 7 broken links on the current site are fixed: four menu/content links to dead pages (term dates, cohort 2030, wellbeing strategy, privacy policy) and partner links missing `https://`.
 - The vacancies list (MyNewTerm) only runs on an https address, so the local preview shows a notice instead.
 - Many uploaded photos are full camera originals (up to 5,712px wide). Resizing them on upload would make pages load much faster.
-- The footer credit reads "Website Design by Ethan Angell", linking to https://github.com/wipeduhr (set in `build.mjs`, footer section).
+- The footer credit reads "Website Design by Ethan Angell" locally and "Concept redesign by Ethan Angell. Not the official Kingsdown School website." on the public copy, linking to https://github.com/wipeduhr (set in `build.mjs`, footer section).

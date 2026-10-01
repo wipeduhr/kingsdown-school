@@ -88,6 +88,15 @@
     revealEls.forEach(el => io.observe(el));
   } else revealEls.forEach(el => el.classList.add('is-in'));
 
+  // sections that run their own 3D entrance (the Beats row) only need to know when they arrive
+  const inview = $$('[data-inview]');
+  if (inview.length && !reduceMotion.matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }), { threshold: .3 });
+    inview.forEach(el => io.observe(el));
+  } else inview.forEach(el => el.classList.add('is-in'));
+
   /* ---------- 3D tilt (cards, values, promos) ---------- */
   const bindTilt = el => {
     if (el.dataset.tiltBound) return;
@@ -130,6 +139,14 @@
     const go = n => {
       const prev = i;
       i = (n + slides.length) % slides.length;
+      if (prev !== i) {
+        // the outgoing slide recedes into the distance while the new one settles forward
+        const out = slides[prev];
+        out.classList.add('is-leaving');
+        clearTimeout(out._leave);
+        out._leave = setTimeout(() => out.classList.remove('is-leaving'), 1400);
+        slides[i].classList.remove('is-leaving');
+      }
       slides.forEach((s, k) => { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
       dots.forEach((d, k) => {
         d.classList.toggle('is-active', k === i);
