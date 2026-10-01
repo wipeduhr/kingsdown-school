@@ -199,10 +199,10 @@ function ytFacade(id, label = 'Play video', caption = '') {
 
 // ---------- chrome ----------
 const navMenu = (item, i) => {
-  if (!item.children.length) return `<li class="nav-item"><a class="nav-link" href="${esc(item.href)}">${esc(item.label)}</a></li>`;
+  if (!item.children.length) return `<li class="nav-item" style="--n:${i}"><a class="nav-link" href="${esc(item.href)}">${esc(item.label)}</a></li>`;
   const n = item.children.length;
   const cols = n > 20 ? 4 : n > 10 ? 3 : n > 5 ? 2 : 1;
-  return `<li class="nav-item has-menu">
+  return `<li class="nav-item has-menu" style="--n:${i}">
     <button class="nav-link" type="button" aria-expanded="false" aria-controls="menu-${i}">${esc(item.label)} <i class="ph ph-caret-down" aria-hidden="true"></i></button>
     <div class="mega${n <= 6 ? ' mega--drop' : ''}" id="menu-${i}">
       <div class="wrap mega__inner${n <= 2 ? ' mega__inner--compact' : ''}">
@@ -239,8 +239,8 @@ const header = currentPath => `
     <button class="search-trigger search-trigger--mini" type="button" data-search-open aria-label="Search"><i class="ph ph-magnifying-glass"></i></button>
   </div>
   <div class="drawer-extras">
-    <div class="drawer-portals">${PORTALS.map(p => `<a href="${esc(p.href)}" target="_blank" rel="noopener">${esc(p.text)}</a>`).join('')}</div>
-    <div class="drawer-contact"><a href="tel:+441793822284"><i class="ph ph-phone"></i> 01793 822284</a><div class="socials">${SOCIAL.map(s => `<a href="${s.href}" aria-label="${esc(s.label)}"><i class="ph ph-${s.icon}"></i></a>`).join('')}</div></div>
+    <div class="drawer-portals">${PORTALS.map((p, j) => `<a href="${esc(p.href)}" target="_blank" rel="noopener" style="--p:${j}">${esc(p.text)}</a>`).join('')}</div>
+    <div class="drawer-contact"><a href="tel:+441793822284"><i class="ph ph-phone"></i> 01793 822284</a><div class="socials">${SOCIAL.map((s, j) => `<a href="${s.href}" aria-label="${esc(s.label)}" style="--p:${j}"><i class="ph ph-${s.icon}"></i></a>`).join('')}</div></div>
   </div>
 </nav>`;
 

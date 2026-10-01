@@ -106,6 +106,7 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   .page .scroll-progress { animation: progress linear both; animation-timeline: scroll(root); }
 }
 @keyframes progress { to { transform: scaleX(1); } }
+@keyframes ring-3d { 0%, 100% { transform: none; } 25% { transform: perspective(100px) rotateY(-35deg) rotate(-12deg); } 55% { transform: perspective(100px) rotateY(30deg) rotate(10deg); } 80% { transform: rotate(-4deg); } }
 
 .utility { background: var(--navy-night); color: #fff; font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
 .utility__inner { display: flex; justify-content: flex-end; }
@@ -146,10 +147,10 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   background: none; border: 0; color: #fff; text-decoration: none; cursor: pointer;
   font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap;
 }
-.nav-link .ph { font-size: .85rem; transition: transform .35s var(--ease); }
+.nav-link .ph { display: inline-block; font-size: .85rem; transition: transform .55s var(--ease); }
 .nav-link::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 10px; height: 2px; background: var(--gold); border-radius: 2px; transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
 .nav-link:hover::after, .nav-link[aria-expanded="true"]::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); }
-.nav-link[aria-expanded="true"] .ph { transform: rotate(180deg); }
+.nav-link[aria-expanded="true"] .ph { transform: perspective(60px) rotateX(180deg); }
 
 .mega {
   position: absolute; left: 0; right: 0; top: 100%;
@@ -678,16 +679,20 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   .masthead__tools .tel, .masthead__tools .divider, .masthead__tools .socials { display: none; }
   .search-trigger span, .search-trigger kbd { display: none; }
   .search-trigger { padding: 9px; border-radius: 50%; }
-  .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); background: none; color: #fff; cursor: pointer; }
+  /* menu button flips over like a coin while the bars cross into an X */
+  .menu-toggle { --flip: 0deg; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); background: none; color: #fff; cursor: pointer; transform: perspective(400px) rotateY(var(--flip)); transition: transform .8s var(--ease), background-color .3s, border-color .3s; }
+  .menu-toggle:active { transform: perspective(400px) rotateY(var(--flip)) scale(.9); }
+  .menu-open .menu-toggle { --flip: 180deg; background: rgb(255 255 255 / .1); border-color: var(--gold); }
   .menu-toggle__bars { display: grid; gap: 6px; width: 18px; }
-  .menu-toggle__bars span { display: block; height: 2px; border-radius: 2px; background: currentColor; transition: transform .4s var(--ease); }
+  .menu-toggle__bars span { display: block; height: 2px; border-radius: 2px; background: currentColor; transition: transform .5s var(--ease) .1s; }
   .menu-open .menu-toggle__bars span:first-child { transform: translateY(4px) rotate(45deg); }
   .menu-open .menu-toggle__bars span:last-child { transform: translateY(-4px) rotate(-45deg); }
   .masthead__inner { gap: 12px; }
   .masthead__tools { margin-left: auto; }
 
-  .primary-nav { position: fixed; inset: 0; top: var(--mast-h, 66px); z-index: 54; background: var(--navy-deep); overflow-y: auto; overscroll-behavior: contain; visibility: hidden; opacity: 0; transform: translateY(-12px); transition: opacity .3s, transform .45s var(--ease), visibility 0s linear .45s; }
-  .menu-open .primary-nav { visibility: visible; opacity: 1; transform: none; transition: opacity .3s, transform .45s var(--ease), visibility 0s; }
+  .primary-nav { position: fixed; inset: 0; top: var(--mast-h, 66px); z-index: 54; background: var(--navy-deep); overflow-y: auto; overscroll-behavior: contain; visibility: hidden; opacity: 0; transform-origin: 50% 0; transform: perspective(1400px) rotateX(-14deg) translateY(-10px); transition: opacity .3s, transform .45s var(--ease), visibility 0s linear .45s; }
+  /* the panel swings down from the header like a hinged board */
+  .menu-open .primary-nav { visibility: visible; opacity: 1; transform: none; transition: opacity .3s, transform .7s var(--ease), visibility 0s; }
   .menu-open { overflow: hidden; }
   .primary-nav__inner { display: block; padding-block: 8px; }
   .mini-brand, .search-trigger--mini { display: none !important; }
@@ -700,7 +705,9 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   .mega__inner, .mega--drop .mega__inner { display: block; width: 100%; padding: 0; }
   .mega__title { display: none; }
   .mega__links { columns: 1 !important; padding: 6px 0 14px; }
-  .mega__links li { opacity: 1; transform: none; }
+  /* a section's links fold down one by one when it opens */
+  .mega__links li { opacity: 0; transform: perspective(600px) rotateX(-75deg); transform-origin: 50% 0; transition: opacity .2s, transform .25s var(--ease-io); }
+  .has-menu.is-open .mega__links li { opacity: 1; transform: none; transition: opacity .4s var(--ease), transform .6s var(--ease); transition-delay: calc(var(--i) * 28ms + 80ms); }
   .mega__links a { color: rgb(255 255 255 / .88); margin: 0; padding: 9px 12px; }
   .mega__links a:hover { background: rgb(255 255 255 / .08); color: #fff; transform: none; }
   .drawer-extras { display: grid; gap: 18px; width: min(100% - 32px, var(--wrap)); margin: 18px auto 40px; }
@@ -708,7 +715,23 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   .drawer-portals a { padding: 12px; border-radius: var(--r-sm); background: rgb(255 255 255 / .08); text-decoration: none; font-weight: 700; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
   .drawer-contact { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .drawer-contact > a { font-weight: 700; text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
-  .drawer-contact .ph-phone { color: var(--gold); }
+  .drawer-contact .ph-phone { display: inline-block; color: var(--gold); }
+
+  /* headings flip down into place one after another as the panel opens */
+  .nav-list > .nav-item { opacity: 0; transform: perspective(700px) rotateX(-80deg); transform-origin: 50% 0; transition: opacity .2s, transform .25s var(--ease-io); }
+  .menu-open .nav-list > .nav-item { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .8s var(--ease); transition-delay: calc(90ms + var(--n) * 45ms); }
+  .nav-link[aria-expanded="true"] { color: var(--gold); }
+  /* portal buttons turn in like tiles and tilt back when pressed */
+  .drawer-portals a { opacity: 0; transform: perspective(600px) rotateY(-90deg); transition: opacity .2s, transform .25s var(--ease-io), background-color .2s; }
+  .menu-open .drawer-portals a { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .8s var(--ease), background-color .2s; transition-delay: calc(480ms + var(--p) * 70ms); }
+  .menu-open .drawer-portals a:hover { background: rgb(255 255 255 / .14); }
+  .menu-open .drawer-portals a:active { transform: perspective(600px) rotateX(14deg) scale(.96); transition-delay: 0s; transition-duration: .15s; }
+  /* phone number and social icons spin in like coins, and spin again when touched */
+  .drawer-contact > a, .drawer-contact .socials a { opacity: 0; transform: perspective(500px) rotateY(180deg); transition: opacity .2s, transform .25s var(--ease-io); }
+  .menu-open .drawer-contact > a { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .9s var(--ease); transition-delay: .72s; }
+  .menu-open .drawer-contact .socials a { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .9s var(--ease), background-color .2s, color .2s; transition-delay: calc(760ms + var(--p) * 70ms); }
+  .menu-open .drawer-contact .socials a:hover, .menu-open .drawer-contact .socials a:focus-visible { transform: perspective(500px) rotateY(360deg); transition: transform .8s var(--ease), background-color .2s, color .2s; transition-delay: 0s; }
+  .menu-open .drawer-contact > a:hover .ph-phone { animation: ring-3d .7s var(--ease); }
   .section-nav, .rail { position: static; }
 }
 
