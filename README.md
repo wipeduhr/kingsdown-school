@@ -10,7 +10,12 @@ npm run serve      # serve the last build
 npm run build      # rebuild site/ from data/pages.json
 npm run crawl      # re-crawl the live site into data/pages.json (a few minutes)
 npm run verify     # check every original word, link, image and video is present
+npm run deploy     # publish the shareable copy to GitHub Pages (gh-pages branch)
 ```
+
+Shareable link: https://wipeduhr.github.io/kingsdown-school/
+
+The public copy carries a "Concept redesign by Ethan Angell, not the official website" bar and asks search engines not to index it, so nobody mistakes it for the school's real site. The local preview has neither.
 
 ## Where things live
 

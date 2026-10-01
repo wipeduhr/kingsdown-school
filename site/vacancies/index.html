@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" data-base="">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -139,7 +139,7 @@
     (function(){
       var box=document.getElementById('mnt-parent-container');
       // MyNewTerm only serves https sites, so the local preview shows a notice instead
-      if(location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\'s secure https:// address, so it cannot load in this local preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
+      if(!/kingsdownschool\.co\.uk$/.test(location.hostname)||location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\'s own secure web address, so it cannot load in this preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
       var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);
     })();
   </script>

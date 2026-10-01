@@ -7,7 +7,8 @@
     "build": "node build.mjs",
     "verify": "node verify.mjs",
     "serve": "node serve.mjs 4321",
-    "start": "node build.mjs && node serve.mjs 4321"
+    "start": "node build.mjs && node serve.mjs 4321",
+    "deploy": "node deploy.mjs"
   },
   "keywords": [],
   "author": "",

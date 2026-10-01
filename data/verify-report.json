@@ -8,7 +8,7 @@
  "issues": [
   {
    "page": "/choose-us",
-   "coverage": 90,
+   "coverage": 91.3,
    "missingWords": [
     "offer",
     "enjoy",
@@ -28,10 +28,7 @@
     "tour",
     "head",
     "so",
-    "much",
-    "browser",
-    "does",
-    "tag"
+    "much"
    ],
    "missingLinks": [],
    "missingImgs": [],

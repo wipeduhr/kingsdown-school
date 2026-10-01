@@ -5,7 +5,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = import.meta.dirname;
-const OUT = path.join(ROOT, 'site');
+// Local preview: plain `node build.mjs` -> site/. Public copy (see deploy.mjs): BASE=/kingsdown-school PUBLIC=1 OUT=<dir>.
+const OUT = process.env.OUT ? path.resolve(process.env.OUT) : path.join(ROOT, 'site');
+const BASE = (process.env.BASE || '').replace(/\/+$/, '');
+const PUBLIC = process.env.PUBLIC === '1';
+// prefix every root-relative URL with the base path (GitHub Pages serves the project from a sub-folder)
+const withBase = html => BASE ? html.replace(/(\s(?:href|src|action)=")\/(?!\/)/g, `$1${BASE}/`).replace(/(content="0; url=)\/(?!\/)/g, `$1${BASE}/`) : html;
 const ORIGIN = 'https://www.kingsdownschool.co.uk';
 const SYS = ORIGIN + '/images/sys_images/';
 const raw = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/pages.json'), 'utf8'));
@@ -306,13 +311,13 @@ ${ofsted ? `<aside class="ofsted-pop" data-ofsted hidden aria-label="Ofsted Good
 <a href="#top" class="to-top" data-to-top aria-label="Back to top"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" pathLength="100"></circle></svg><i class="ph ph-arrow-up"></i></a>`;
 
 const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = false, section = '' }) => `<!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" data-base="${BASE}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description || 'Kingsdown is a mixed 11-16 Secondary School located in Stratton St Margaret, Swindon. We champion each and every student.')}">
-<meta name="theme-color" content="#00396B">
+<meta name="theme-color" content="#00396B">${PUBLIC ? '\n<meta name="robots" content="noindex, nofollow">' : ''}
 <script>document.documentElement.classList.add('js')</script>
 <link rel="icon" type="image/png" sizes="32x32" href="${SYS}favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="${SYS}apple-touch-icon.png">
@@ -324,7 +329,8 @@ const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = fa
 </head>
 <body class="${bodyClass}" data-path="${esc(p)}" data-section="${esc(section)}" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="scroll-progress" aria-hidden="true"></div>
+<div class="scroll-progress" aria-hidden="true"></div>${PUBLIC ? `
+<div class="concept-bar" role="note"><div class="wrap concept-bar__inner"><span><strong>Concept redesign by Ethan Angell.</strong> This is not the official Kingsdown School website.</span><a href="https://www.kingsdownschool.co.uk/" rel="noopener">Go to the official site <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a></div></div>` : ''}
 ${header(p)}
 <main id="main">
 ${body}
@@ -404,7 +410,7 @@ const written = new Set();
 function write(p, html) {
   const file = p === '/' ? path.join(OUT, 'index.html') : path.join(OUT, ...p.split('/').filter(Boolean), 'index.html');
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, html);
+  fs.writeFileSync(file, withBase(html));
   written.add(p);
 }
 const textOf = html => clean(cheerio.load(`<div>${html || ''}</div>`).text());
@@ -615,7 +621,7 @@ function buildVacancies() {
     (function(){
       var box=document.getElementById('mnt-parent-container');
       // MyNewTerm only serves https sites, so the local preview shows a notice instead
-      if(location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\\'s secure https:// address, so it cannot load in this local preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
+      if(!/kingsdownschool\\.co\\.uk$/.test(location.hostname)||location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\\'s own secure web address, so it cannot load in this preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
       var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);
     })();
   </script>`;
@@ -632,7 +638,7 @@ function buildRedirects() {
 function build404() {
   const body = `<section class="page-hero"><div class="page-hero__bg" aria-hidden="true"><span></span><span></span><span></span></div><div class="wrap page-hero__inner"><h1 class="page-hero__title">Page not found</h1><p class="page-hero__lead">Sorry, we could not find that page. Try searching, or head back to the homepage.</p></div></section>
   <div class="wrap notfound"><button class="btn btn--primary" type="button" data-search-open><i class="ph ph-magnifying-glass"></i> Search the website</button> <a class="btn btn--ghost" href="/">Go to the homepage</a></div>`;
-  fs.writeFileSync(path.join(OUT, '404.html'), layout({ title: 'Page not found | Kingsdown School', path: '/404', body, bodyClass: 'page' }));
+  fs.writeFileSync(path.join(OUT, '404.html'), withBase(layout({ title: 'Page not found | Kingsdown School', path: '/404', body, bodyClass: 'page' })));
 }
 
 // ---------- assets ----------
@@ -670,7 +676,7 @@ buildNewsIndex();
 for (const p of Object.values(pages)) if (p.type === 'info' || p.type === 'news') buildInfo(p);
 buildRedirects();
 build404();
-fs.writeFileSync(path.join(OUT, 'search-index.json'), JSON.stringify(searchDocs));
+fs.writeFileSync(path.join(OUT, 'search-index.json'), JSON.stringify(searchDocs.map(d => ({ ...d, u: BASE + d.u }))));
 const uniqFixes = [...new Map(fixes.filter(f => f.page).map(f => [f.page + f.was, f])).values()];
 fs.writeFileSync(path.join(ROOT, 'data/link-fixes.json'), JSON.stringify(uniqFixes, null, 1));
 console.log(`Built ${written.size} pages, ${searchDocs.length} searchable, ${NEWS.length} news stories, ${uniqFixes.length} broken links fixed.`);

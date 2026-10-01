@@ -55,7 +55,8 @@
     if (document.body.classList.contains('menu-open')) toggleDrawer(false);
   });
   // highlight the top-level item for the current page
-  const here = document.body.dataset.path;
+  const BASE = document.documentElement.dataset.base || '';
+  const here = BASE + document.body.dataset.path;
   const section = (document.body.dataset.section || '').toLowerCase();
   const own = menus.find(m => $('.nav-link', m).textContent.trim().toLowerCase() === section)
     || menus.find(m => $$('.mega a', m).some(a => a.getAttribute('href') === here));
@@ -249,7 +250,7 @@
   /* ---------- search ---------- */
   const search = $('[data-search]');
   let index = null, loading = null;
-  const loadIndex = () => loading || (loading = fetch('/search-index.json').then(r => r.json()).then(d => {
+  const loadIndex = () => loading || (loading = fetch(BASE + '/search-index.json').then(r => r.json()).then(d => {
     index = d.map(doc => ({ ...doc, _t: doc.t.toLowerCase(), _s: (doc.s || '').toLowerCase(), _x: (doc.x || '').toLowerCase() }));
     return index;
   }));
