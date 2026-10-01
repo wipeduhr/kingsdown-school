@@ -1,0 +1,44 @@
+[
+ {
+  "page": "/info/Safeguarding-keeping-your-child-safe",
+  "was": "/info/wellbeing-and-mental-health-strategy",
+  "now": "/info/wellbeing-and-mental-health",
+  "why": "dead page on the current site"
+ },
+ {
+  "page": "/info/wellbeing-and-mental-health",
+  "was": "www.stepswindon.co.uk",
+  "now": "https://www.stepswindon.co.uk",
+  "why": "missing https:// so it looped back into the school site"
+ },
+ {
+  "page": "/info/wellbeing-and-mental-health",
+  "was": "www.wayuk.org",
+  "now": "https://www.wayuk.org",
+  "why": "missing https:// so it looped back into the school site"
+ },
+ {
+  "page": "/info/wellbeing-and-mental-health",
+  "was": "www.bestrust.co.uk",
+  "now": "https://www.bestrust.co.uk",
+  "why": "missing https:// so it looped back into the school site"
+ },
+ {
+  "page": "/info/enrichment",
+  "was": "www.dofe.org",
+  "now": "https://www.dofe.org",
+  "why": "missing https:// so it looped back into the school site"
+ },
+ {
+  "page": "/info/enrichment",
+  "was": "www.dofe.org/welcome-packs-dth",
+  "now": "https://www.dofe.org/welcome-packs-dth",
+  "why": "missing https:// so it looped back into the school site"
+ },
+ {
+  "page": "/news/parent-information-evening",
+  "was": "/info/cohort-kds-2030",
+  "now": "/info/cohort-kds-2031",
+  "why": "dead page on the current site"
+ }
+]
