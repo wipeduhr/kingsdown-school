@@ -450,13 +450,16 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
 @media (min-width: 768px) { .prose .col-md-4 { flex: 0 0 33.333% !important; max-width: 33.333% !important; } .prose .col-md-6 { flex: 0 0 50% !important; max-width: 50% !important; } }
 @media (min-width: 1300px) { .prose .col-lg-3 { flex: 0 0 25% !important; max-width: 25% !important; } }
 
-/* alumni cards */
-.prose .imagebox { margin-bottom: 16px; }
-.prose .imagebox a { display: block; text-decoration: none; border-radius: var(--r); overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); transition: transform .4s var(--ease), box-shadow .3s; }
-.prose .imagebox a:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-.prose .imagebox img { margin: 0; border-radius: 0; box-shadow: none; width: 100%; aspect-ratio: 1; object-fit: cover; }
-.prose .imagebox-desc { padding: 10px 12px; font-size: .85rem; color: var(--navy); }
-.prose .imagebox-desc p { margin: 0; }
+/* alumni tiles (background images on the current site) */
+.prose .row.alumni { margin-bottom: 1em; }
+.prose .row.alumni > [class*="col"] { margin-bottom: 16px; }
+.prose a.alumni-card { --rx: 0deg; --ry: 0deg; --gx: 50%; --gy: 50%; position: relative; display: block; aspect-ratio: 1; border-radius: var(--r); overflow: hidden; isolation: isolate; text-decoration: none; background: var(--navy); box-shadow: var(--shadow-sm); transform: perspective(800px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s var(--ease), box-shadow .3s; }
+.prose a.alumni-card.is-tilting { transition: transform .12s linear, box-shadow .3s; }
+.prose a.alumni-card:hover { box-shadow: var(--shadow); }
+.prose .alumni .imagebox { position: absolute; inset: 0; height: 100% !important; background-size: cover !important; background-position: center 20% !important; transition: transform .8s var(--ease); }
+.prose .alumni .imagebox::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgb(0 25 50 / .85), transparent 55%); }
+.prose a.alumni-card:hover .imagebox { transform: scale(1.06); }
+.prose .alumni .imagebox-desc { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 10px 12px; color: #fff; font-weight: 700; font-size: .86rem; line-height: 1.25; }
 .prose .alumni-image { aspect-ratio: 4 / 3; max-width: 420px; border-radius: var(--r); background-size: cover !important; background-position: center !important; margin-bottom: 20px; box-shadow: var(--shadow); padding: 0 !important; }
 
 /* accordions */
@@ -548,6 +551,10 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
 /* ---------- vacancies / 404 ---------- */
 .vacancies-widget { min-height: 240px; }
 .vacancies-note { color: var(--muted); font-size: .95rem; margin-top: 24px; }
+.preview-note { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 24px; border-radius: var(--r); background: var(--mist); border: 1px dashed var(--line); }
+.preview-note > .ph { font-size: 1.6rem; color: var(--royal); }
+.preview-note p { margin: 6px 0 16px; color: var(--muted); }
+.preview-note .btn { color: #fff; }
 .skeleton-list { display: grid; gap: 14px; }
 .skeleton-list span { display: block; height: 88px; border-radius: var(--r); background: linear-gradient(90deg, var(--mist) 25%, #e6edf3 50%, var(--mist) 75%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
@@ -652,7 +659,7 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
   .masthead__tools .tel, .masthead__tools .divider, .masthead__tools .socials { display: none; }
   .search-trigger span, .search-trigger kbd { display: none; }
   .search-trigger { padding: 9px; border-radius: 50%; }
-  .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); background: none; color: #fff; cursor: pointer; margin-left: -12px; }
+  .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); background: none; color: #fff; cursor: pointer; }
   .menu-toggle__bars { display: grid; gap: 6px; width: 18px; }
   .menu-toggle__bars span { display: block; height: 2px; border-radius: 2px; background: currentColor; transition: transform .4s var(--ease); }
   .menu-open .menu-toggle__bars span:first-child { transform: translateY(4px) rotate(45deg); }

@@ -1,0 +1,41 @@
+{
+ "summary": {
+  "pagesChecked": 312,
+  "pagesWithEverything": 311,
+  "pagesWithDifferences": 1,
+  "brokenInternalLinks": []
+ },
+ "issues": [
+  {
+   "page": "/choose-us",
+   "coverage": 90,
+   "missingWords": [
+    "offer",
+    "enjoy",
+    "opening",
+    "doors",
+    "current",
+    "prospective",
+    "as x2",
+    "well",
+    "members",
+    "community",
+    "look",
+    "forward",
+    "meeting",
+    "welcoming",
+    "arrange",
+    "tour",
+    "head",
+    "so",
+    "much",
+    "browser",
+    "does",
+    "tag"
+   ],
+   "missingLinks": [],
+   "missingImgs": [],
+   "missingYt": []
+  }
+ ]
+}

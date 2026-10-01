@@ -56,7 +56,10 @@
   });
   // highlight the top-level item for the current page
   const here = document.body.dataset.path;
-  menus.forEach(m => { if ($$('.mega a', m).some(a => a.getAttribute('href') === here)) $('.nav-link', m).setAttribute('aria-current', 'page'); });
+  const section = (document.body.dataset.section || '').toLowerCase();
+  const own = menus.find(m => $('.nav-link', m).textContent.trim().toLowerCase() === section)
+    || menus.find(m => $$('.mega a', m).some(a => a.getAttribute('href') === here));
+  own && $('.nav-link', own).setAttribute('aria-current', 'page');
   $$('.nav-list > .nav-item > a.nav-link').forEach(a => { if (here && here.startsWith(a.getAttribute('href'))) a.setAttribute('aria-current', 'page'); });
 
   const toggle = $('[data-menu-toggle]');

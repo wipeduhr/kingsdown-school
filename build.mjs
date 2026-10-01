@@ -182,6 +182,7 @@ function transform(html, from) {
   });
   root.find('a[href*="youtu"]').each((_, a) => { if (!$(a).hasClass('ext')) return; $(a).addClass('video-link'); });
 
+  root.find('.alumni a').each((_, a) => { $(a).attr('data-tilt', '').addClass('alumni-card'); });
   root.find('table').each((_, t) => { $(t).removeAttr('style').removeAttr('width').removeAttr('border'); $(t).wrap('<div class="table-wrap"></div>'); });
   root.find('p').each((_, p) => { if (!clean($(p).text()) && !$(p).find('img,iframe,video,a').length) $(p).remove(); });
   return root.html();
@@ -304,7 +305,7 @@ ${ofsted ? `<aside class="ofsted-pop" data-ofsted hidden aria-label="Ofsted Good
 </aside>` : ''}
 <a href="#top" class="to-top" data-to-top aria-label="Back to top"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" pathLength="100"></circle></svg><i class="ph ph-arrow-up"></i></a>`;
 
-const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = false }) => `<!doctype html>
+const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = false, section = '' }) => `<!doctype html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
@@ -321,7 +322,7 @@ const layout = ({ title, description, path: p, body, bodyClass = '', ofsted = fa
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/site.js" defer></script>
 </head>
-<body class="${bodyClass}" data-path="${esc(p)}" id="top">
+<body class="${bodyClass}" data-path="${esc(p)}" data-section="${esc(section)}" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="scroll-progress" aria-hidden="true"></div>
 ${header(p)}
@@ -355,9 +356,11 @@ const rail = page => {
   </aside>`;
 };
 
+// drop CMS template glitches such as "{title}" that leak into some sidebars on the current site
+const cleanSectionLinks = page => (page.sectionLinks || []).filter(l => !/[{}]/.test(l.text + l.href));
 const sectionNav = page => {
-  if (!page.sectionLinks?.length) return '';
-  const links = page.sectionLinks.map(l => ({ text: l.text, href: resolveHref(l.href) }));
+  const links = cleanSectionLinks(page).map(l => ({ text: l.text, href: resolveHref(l.href) }));
+  if (!links.length) return '';
   return `<aside class="section-nav" aria-label="${esc(page.sectionTitle || 'In this section')}">
     <details class="section-nav__box" open>
       <summary><span>${esc(page.sectionTitle || 'In this section')}</span><i class="ph ph-caret-down" aria-hidden="true"></i></summary>
@@ -366,16 +369,23 @@ const sectionNav = page => {
   </aside>`;
 };
 
+// The page's section: the menu named in the old breadcrumb if it really holds the page, else the first menu that does.
+const sectionFor = page => {
+  if (page.type === 'news' || page.type === 'news-index') return NAV.find(n => n.href === '/info/kingsdown-news');
+  if (page.path?.startsWith('/alumni/')) return NAV.find(n => n.children.some(c => c.href === '/info/alumni'));
+  const bc = clean(page.breadcrumb).replace(/^Home\s*/, '').toLowerCase();
+  const containing = NAV.filter(n => n.children.some(c => c.href.toLowerCase() === (page.path || '').toLowerCase()));
+  const fromCrumb = NAV.find(n => bc.startsWith(n.label.toLowerCase()));
+  if (fromCrumb && (containing.includes(fromCrumb) || !containing.length)) return fromCrumb;
+  return containing[0] || fromCrumb || null;
+};
+
 const crumbsFor = page => {
-  const t = clean(page.breadcrumb);
-  let section = t.replace(/^Home\s*/, '');
-  if (page.title && section.endsWith(page.title)) section = section.slice(0, -page.title.length).trim();
   const trail = [{ text: 'Home', href: '/' }];
+  const sec = sectionFor(page);
   if (page.type === 'news') trail.push({ text: 'Kingsdown News', href: '/info/kingsdown-news' });
-  else if (section && section !== page.title) {
-    const nav = NAV.find(n => n.label.toLowerCase() === section.toLowerCase());
-    trail.push({ text: section, href: nav?.href || null });
-  }
+  else if (page.path?.startsWith('/alumni/')) trail.push({ text: 'Alumni', href: '/info/alumni' });
+  else if (sec && page.type !== 'news-index') trail.push({ text: sec.label, href: sec.href || null });
   return `<nav class="crumbs" aria-label="Breadcrumb"><ol>${trail.map(c => `<li>${c.href ? `<a href="${esc(c.href)}">${esc(c.text)}</a>` : `<span>${esc(c.text)}</span>`}</li>`).join('')}<li><span aria-current="page">${esc(page.title)}</span></li></ol></nav>`;
 };
 
@@ -419,13 +429,14 @@ function buildInfo(page) {
     </nav>`;
   }
   const body = `${pageHero(page, extra)}
-  <div class="wrap page-grid${page.sectionLinks?.length ? '' : ' page-grid--no-nav'}">
+  <div class="wrap page-grid${cleanSectionLinks(page).length ? '' : ' page-grid--no-nav'}">
     ${sectionNav(page)}
     <article class="prose" data-prose>${content}${pager}</article>
     ${rail(page)}
   </div>`;
-  write(page.path, layout({ title: `${page.title} | Kingsdown School`, description: describe(content), path: page.path, body, bodyClass: `page page--${page.type}` }));
-  searchDocs.push({ t: page.title, u: page.path, s: isNews ? 'News' : (clean(page.breadcrumb).replace(/^Home\s*/, '').replace(page.title, '').trim() || 'Kingsdown School'), d: isNews ? clean(page.date) : '', i: isNews ? n?.image : undefined, x: textOf(content).slice(0, 6000) });
+  const sec = sectionFor(page)?.label || '';
+  write(page.path, layout({ title: `${page.title} | Kingsdown School`, description: describe(content), path: page.path, body, bodyClass: `page page--${page.type}`, section: sec }));
+  searchDocs.push({ t: page.title, u: page.path, s: isNews ? 'News' : page.path.startsWith('/alumni/') ? 'Alumni' : (sec || 'Kingsdown School'), d: isNews ? clean(page.date) : '', i: isNews ? n?.image : undefined, x: textOf(content).slice(0, 6000) });
 }
 
 const PER = 15;
@@ -453,7 +464,7 @@ function buildNewsIndex() {
         <div class="news-grid${pg === 0 ? ' news-grid--lead' : ''}" data-news-grid>${items.map((n, i) => newsCard(n, pg === 0 && i === 0 ? 'lg' : 'sm')).join('')}</div>
         ${pagination}
       </div>`;
-      write(p, layout({ title: pg === 0 ? 'Kingsdown News | Kingsdown School' : `Kingsdown News, page ${pg + 1} | Kingsdown School`, description: intro, path: p, body, bodyClass: 'page page--news-index' }));
+      write(p, layout({ title: pg === 0 ? 'Kingsdown News | Kingsdown School' : `Kingsdown News, page ${pg + 1} | Kingsdown School`, description: intro, path: p, body, bodyClass: 'page page--news-index', section: 'News' }));
     }
   }
   searchDocs.push({ t: 'Kingsdown News', u: '/info/kingsdown-news', s: 'News', d: '', x: intro });
@@ -565,7 +576,7 @@ function buildChooseUs() {
   }).get();
   const tileHtml = tiles.map((t, i) => {
     if (t.kind === 'yt') return `<figure class="cu-tile" data-reveal style="--i:${i}">${ytFacade(t.id, 'Play video: ' + t.cap)}<figcaption>${esc(t.cap)}</figcaption></figure>`;
-    if (t.kind === 'mp4') return `<figure class="cu-tile" data-reveal style="--i:${i}"><div class="cu-tile__media"><video controls preload="metadata" src="${esc(t.src)}"></video></div><figcaption>${esc(t.cap)}</figcaption></figure>`;
+    if (t.kind === 'mp4') return `<figure class="cu-tile" data-reveal style="--i:${i}"><div class="cu-tile__media"><video controls preload="metadata" src="${esc(t.src)}">Your browser does not support the video tag.</video></div><figcaption>${esc(t.cap)}</figcaption></figure>`;
     return `<figure class="cu-tile" data-reveal style="--i:${i}"><a class="cu-tile__media cu-tile__media--link" href="${esc(t.href)}" data-tilt><img src="${esc(t.img)}" alt="${esc(t.alt)}" loading="lazy"><span class="news-card__glare" aria-hidden="true"></span></a><figcaption><a href="${esc(t.href)}">${esc(t.cap)}</a></figcaption></figure>`;
   }).join('');
   const page = { title: 'Why Choose Kingsdown School?', breadcrumb: 'Home Choose Us', path: '/choose-us', type: 'choose-us' };
@@ -586,7 +597,7 @@ function buildChooseUs() {
     </div>
   </section>
   ${beats()}`;
-  write('/choose-us', layout({ title: 'Why Choose Kingsdown School? | Kingsdown School', description: textOf(lead), path: '/choose-us', body, bodyClass: 'page page--choose' }));
+  write('/choose-us', layout({ title: 'Why Choose Kingsdown School? | Kingsdown School', description: textOf(lead), path: '/choose-us', body, bodyClass: 'page page--choose', section: 'Admissions' }));
   searchDocs.push({ t: 'Why Choose Kingsdown School?', u: '/choose-us', s: 'Admissions', d: '', x: textOf(lead + bodyParas) + ' ' + tiles.map(t => t.cap).join(' ') });
 }
 
@@ -601,9 +612,14 @@ function buildVacancies() {
     ${rail({})}
   </div>
   <script>
-    (function(){var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);})();
+    (function(){
+      var box=document.getElementById('mnt-parent-container');
+      // MyNewTerm only serves https sites, so the local preview shows a notice instead
+      if(location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\\'s secure https:// address, so it cannot load in this local preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
+      var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);
+    })();
   </script>`;
-  write('/vacancies', layout({ title: 'Vacancies | Kingsdown School', path: '/vacancies', body, bodyClass: 'page page--vacancies' }));
+  write('/vacancies', layout({ title: 'Vacancies | Kingsdown School', path: '/vacancies', body, bodyClass: 'page page--vacancies', section: 'Join Us' }));
   searchDocs.push({ t: 'Vacancies', u: '/vacancies', s: 'Join Us', d: '', x: 'Vacancies jobs careers working at Kingsdown School' });
 }
 

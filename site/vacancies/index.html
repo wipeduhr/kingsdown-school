@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/site.js" defer></script>
 </head>
-<body class="page page--vacancies" data-path="/vacancies" id="top">
+<body class="page page--vacancies" data-path="/vacancies" data-section="Join Us" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="scroll-progress" aria-hidden="true"></div>
 
@@ -116,7 +116,7 @@
 <section class="page-hero">
   <div class="page-hero__bg" aria-hidden="true"><span></span><span></span><span></span></div>
   <div class="wrap page-hero__inner">
-    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Vacancies</span></li></ol></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span>Join Us</span></li><li><span aria-current="page">Vacancies</span></li></ol></nav>
     <h1 class="page-hero__title">Vacancies</h1>
     
   </div>
@@ -136,7 +136,12 @@
   </aside>
   </div>
   <script>
-    (function(){var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);})();
+    (function(){
+      var box=document.getElementById('mnt-parent-container');
+      // MyNewTerm only serves https sites, so the local preview shows a notice instead
+      if(location.protocol!=='https:'){box.innerHTML='<div class="preview-note"><i class="ph ph-info"></i><div><strong>Live vacancies appear here.</strong><p>The vacancy list comes from MyNewTerm, which only runs on the school\'s secure https:// address, so it cannot load in this local preview.</p><a class="btn btn--primary" href="https://www.kingsdownschool.co.uk/vacancies" target="_blank" rel="noopener">View current vacancies <i class="ph ph-arrow-up-right"></i></a></div></div>';return;}
+      var s=document.createElement('script');s.src='https://api.mynewterm.com/assets/v1/dist/js/school_vacancies.js?v='+Date.now();s.onload=function(){try{mntSchoolVacancies('565BBBAE-FF30-43BA-A2B9-09C2535AF6B6',1)}catch(e){}};document.body.appendChild(s);
+    })();
   </script>
 </main>
 
