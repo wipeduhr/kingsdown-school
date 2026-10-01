@@ -333,17 +333,35 @@ kbd { font-family: inherit; font-size: .68rem; font-weight: 600; padding: .15em 
 .footer__small { font-size: .76rem; line-height: 1.6; color: rgb(255 255 255 / .82); }
 .footer__small a { color: #fff; }
 .footer__label { font-size: .85rem; margin-bottom: 6px !important; }
-.rlt-logo img { display: block; width: 150px; height: auto; margin-bottom: 14px; transition: transform .4s var(--ease); }
-.rlt-logo:hover img { transform: translateY(-2px); }
+.rlt-logo img { display: block; width: 150px; height: auto; margin-bottom: 14px; }
 .socials--footer { margin-top: 4px; margin-left: -8px; }
 .footer__badges { display: grid; gap: 8px; justify-items: start; align-content: start; }
-.sharp-logo img { display: block; width: 130px; height: auto; transition: transform .4s var(--ease); }
-.sharp-logo:hover img { transform: scale(1.04); }
+.sharp-logo img { display: block; width: 130px; height: auto; }
+/* partner logos lean toward the pointer */
+.rlt-logo, .sharp-logo { --rx: 0deg; --ry: 0deg; display: inline-block; transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) scale(var(--lift, 1)); transition: transform .5s var(--ease); }
+.rlt-logo:hover, .sharp-logo:hover { --lift: 1.05; }
+.rlt-logo.is-tilting, .sharp-logo.is-tilting { transition: transform .12s linear; }
 .footer__badges .coin { margin-top: 0; }
 .footer__bar { background: var(--navy-deep); }
 .footer__bar-inner { display: flex; justify-content: space-between; gap: 16px; padding-block: 14px; color: rgb(255 255 255 / .85); }
 .footer__bar a { color: #fff; text-decoration: none; }
 .footer__bar a:hover { color: var(--gold); }
+/* footer social icons spin like coins on hover or keyboard focus */
+.socials--footer a { transition: transform .8s var(--ease), background-color .2s, color .2s; }
+.socials--footer a:hover, .socials--footer a:focus-visible { transform: perspective(500px) rotateY(360deg); }
+
+/* the footer assembles in 3D when it scrolls into view: columns stand up, icons and the Ofsted badge
+   spin in, and the copyright bar unfolds */
+.js .site-footer:not(.is-in) :is(.footer__grid > *, .footer__bar-inner) { opacity: 0; }
+.site-footer.is-in .footer__grid > * { animation: foot-stand 1.1s var(--ease) backwards; transform-origin: 50% 100%; }
+.site-footer.is-in .footer__grid > :nth-child(2) { animation-delay: .12s; }
+.site-footer.is-in .footer__grid > :nth-child(3) { animation-delay: .24s; }
+.site-footer.is-in .socials--footer a { animation: coin-in .9s var(--ease) backwards; animation-delay: calc(.45s + var(--p) * 80ms); }
+.site-footer.is-in .footer__badges .coin__inner { animation: coin-in 1.2s var(--ease) backwards .55s; }
+.site-footer.is-in .footer__bar-inner { animation: bar-unfold .9s var(--ease) backwards .5s; transform-origin: 50% 100%; }
+@keyframes foot-stand { from { opacity: 0; transform: perspective(1000px) rotateX(65deg) translateY(20px); } }
+@keyframes coin-in { from { opacity: 0; transform: perspective(500px) rotateY(180deg); } }
+@keyframes bar-unfold { from { opacity: 0; transform: perspective(800px) rotateX(-90deg); } }
 
 /* ---------- inner page hero ---------- */
 .page-hero { position: relative; overflow: hidden; background: var(--navy); color: #fff; isolation: isolate; }

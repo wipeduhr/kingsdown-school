@@ -245,22 +245,22 @@ const header = currentPath => `
 </nav>`;
 
 const footer = () => `
-<footer class="site-footer">
+<footer class="site-footer" data-inview>
   <div class="wrap footer__grid">
-    <div class="footer__school" data-reveal>
+    <div class="footer__school">
       <h3>Kingsdown School</h3>
       <p class="footer__address"><i class="ph ph-map-pin" aria-hidden="true"></i> Hyde Road, Stratton&nbsp;St&nbsp;Margaret, Swindon&nbsp;SN2&nbsp;7SH</p>
       <p class="footer__tel">Tel: <a href="tel:+441793822284">01793 822284</a></p>
       <p class="footer__small">Please note, all calls are recorded for monitoring and training purposes.<br>If you would like a hard copy of anything on the website please contact <a href="mailto:enquiries@kingsdownschool.co.uk">enquiries@kingsdownschool.co.uk</a></p>
-      <div class="socials socials--footer">${SOCIAL.map(s => `<a href="${s.href}" aria-label="${esc(s.label)}" title="${esc(s.label)}"${s.href.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}><i class="ph ph-${s.icon}"></i></a>`).join('')}</div>
+      <div class="socials socials--footer">${SOCIAL.map((s, j) => `<a style="--p:${j}" href="${s.href}" aria-label="${esc(s.label)}" title="${esc(s.label)}"${s.href.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}><i class="ph ph-${s.icon}"></i></a>`).join('')}</div>
     </div>
-    <div class="footer__trust" data-reveal>
+    <div class="footer__trust">
       <p class="footer__label">Part of the</p>
-      <a class="rlt-logo" href="https://riverlearningtrust.org/" target="_blank" rel="noopener" title="River Learning Trust"><img src="${SYS}RLTLogo.png" alt="River Learning Trust" width="160" height="45" loading="lazy"></a>
+      <a class="rlt-logo" data-tilt href="https://riverlearningtrust.org/" target="_blank" rel="noopener" title="River Learning Trust"><img src="${SYS}RLTLogo.png" alt="River Learning Trust" width="160" height="45" loading="lazy"></a>
       <p class="footer__small">Kingsdown School is an academy which is a part of the River Learning Trust which is an exempt charitable company limited by guarantee registered in&nbsp;England and Wales with registered company number&nbsp;7966500 and its registered office is River Learning Trust, Central Office C/O Rose Hill Primary School, The Oval, Oxford, OX4&nbsp;4HF</p>
     </div>
-    <div class="footer__badges" data-reveal>
-      <a class="sharp-logo" href="https://kingsdown.thesharpsystem.com/" target="_blank" rel="noopener" title="The Sharp System"><img src="${SYS}KDS-Sharp_Text.png" alt="The Sharp System" width="130" height="62" loading="lazy"></a>
+    <div class="footer__badges">
+      <a class="sharp-logo" data-tilt href="https://kingsdown.thesharpsystem.com/" target="_blank" rel="noopener" title="The Sharp System"><img src="${SYS}KDS-Sharp_Text.png" alt="The Sharp System" width="130" height="62" loading="lazy"></a>
       <a class="coin" href="/info/ofsted-reports" title="Ofsted Good"><span class="coin__inner"><img src="${SYS}Ofsted-good-logo.png" alt="Ofsted Good" width="96" height="96" loading="lazy"></span></a>
     </div>
   </div>
