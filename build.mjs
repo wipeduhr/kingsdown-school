@@ -267,7 +267,7 @@ const footer = () => `
   <div class="footer__bar">
     <div class="wrap footer__bar-inner">
       <small>&copy; 2026 Kingsdown School <span aria-hidden="true">|</span> <a href="/info/policies" title="Privacy Policies">Privacy Policies</a></small>
-      <small>${PUBLIC ? 'Concept redesign by' : 'Website Design by'} <a href="https://github.com/wipeduhr" target="_blank" rel="noopener" title="Ethan Angell on GitHub">Ethan Angell</a>${PUBLIC ? '. Not the official <a href="https://www.kingsdownschool.co.uk/" rel="noopener">Kingsdown School website</a>.' : ''}</small>
+      <small>${PUBLIC ? 'Concept design by' : 'Website Design by'} <a href="https://github.com/wipeduhr" target="_blank" rel="noopener" title="Ethan Angell on GitHub">Ethan Angell</a>${PUBLIC ? ' for Kingsdown School' : ''}</small>
     </div>
   </div>
 </footer>`;
