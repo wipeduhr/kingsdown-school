@@ -429,8 +429,8 @@ function buildInfo(page) {
   if (isNews && n) {
     const newer = NEWS[n.i - 1], older = NEWS[n.i + 1];
     pager = `<nav class="article-pager" aria-label="More stories">
-      ${newer ? `<a class="article-pager__link" href="${esc(newer.path)}"><span class="article-pager__dir"><i class="ph ph-arrow-left"></i> Newer story</span><span class="article-pager__title">${esc(newer.title)}</span></a>` : '<span></span>'}
-      ${older ? `<a class="article-pager__link article-pager__link--next" href="${esc(older.path)}"><span class="article-pager__dir">Older story <i class="ph ph-arrow-right"></i></span><span class="article-pager__title">${esc(older.title)}</span></a>` : '<span></span>'}
+      ${newer ? `<a class="article-pager__link" data-tilt href="${esc(newer.path)}"><span class="article-pager__dir"><i class="ph ph-arrow-left"></i> Newer story</span><span class="article-pager__title">${esc(newer.title)}</span></a>` : '<span></span>'}
+      ${older ? `<a class="article-pager__link article-pager__link--next" data-tilt href="${esc(older.path)}"><span class="article-pager__dir">Older story <i class="ph ph-arrow-right"></i></span><span class="article-pager__title">${esc(older.title)}</span></a>` : '<span></span>'}
     </nav>`;
   }
   const body = `${pageHero(page, extra)}
@@ -453,9 +453,9 @@ function buildNewsIndex() {
       const p = pg === 0 ? base : `${base}/P${pg * PER}`;
       const items = NEWS.slice(pg * PER, pg * PER + PER);
       const pages_ = Array.from({ length: total }, (_, i) => i);
-      const pagination = `<nav class="pagination" aria-label="News pages">
+      const pagination = `<nav class="pagination" aria-label="News pages" data-inview>
         ${pg > 0 ? `<a class="pagination__step" href="${pg - 1 === 0 ? base : `${base}/P${(pg - 1) * PER}`}"><i class="ph ph-caret-left"></i> Newer</a>` : ''}
-        <ol>${pages_.map(i => `<li><a href="${i === 0 ? base : `${base}/P${i * PER}`}"${i === pg ? ' aria-current="page"' : ''}>${i + 1}</a></li>`).join('')}</ol>
+        <ol>${pages_.map(i => `<li style="--c:${i}"><a href="${i === 0 ? base : `${base}/P${i * PER}`}"${i === pg ? ' aria-current="page"' : ''}>${i + 1}</a></li>`).join('')}</ol>
         ${pg < total - 1 ? `<a class="pagination__step" href="${base}/P${(pg + 1) * PER}">Older <i class="ph ph-caret-right"></i></a>` : ''}
       </nav>`;
       const page = { title: 'Kingsdown News', type: 'news-index', breadcrumb: 'Home Kingsdown News', path: p };

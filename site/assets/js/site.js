@@ -75,6 +75,11 @@
   /* ---------- scroll reveal ---------- */
   const revealEls = $$('[data-reveal]');
   if (revealEls.length && !reduceMotion.matches && 'IntersectionObserver' in window) {
+    // news grids deal in as a left-to-right wave along each row
+    $$('.news-grid').forEach(g => {
+      const cols = getComputedStyle(g).gridTemplateColumns.split(' ').length || 1;
+      [...g.children].forEach((card, k) => card.style.setProperty('--d', k % cols));
+    });
     const groups = new Map();
     revealEls.forEach(el => {
       const parent = el.parentElement;
@@ -83,7 +88,14 @@
       if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', Math.min(n, 8));
     });
     const io = new IntersectionObserver(entries => entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      el.classList.add('is-in');
+      io.unobserve(el);
+      // once the entrance has played, hand the element back to its normal styles so hover tilt
+      // isn't stuck with the slow, delayed entrance timing
+      const d = parseFloat(el.style.getPropertyValue('--d')) || 0;
+      setTimeout(() => { el.removeAttribute('data-reveal'); el.classList.remove('is-in'); }, 1300 + d * 70);
     }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
     revealEls.forEach(el => io.observe(el));
   } else revealEls.forEach(el => el.classList.add('is-in'));
@@ -114,6 +126,9 @@
         el.style.setProperty('--rx', ((.5 - y) * max * 2).toFixed(2) + 'deg');
         el.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
         el.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+        // -0.5..0.5 pointer offset, used for parallax layers inside news cards
+        el.style.setProperty('--mx', (x - .5).toFixed(3));
+        el.style.setProperty('--my', (y - .5).toFixed(3));
       });
     });
     el.addEventListener('pointerleave', () => {
@@ -121,6 +136,8 @@
       el.classList.remove('is-tilting');
       el.style.setProperty('--rx', '0deg');
       el.style.setProperty('--ry', '0deg');
+      el.style.setProperty('--mx', 0);
+      el.style.setProperty('--my', 0);
     });
   };
   $$('[data-tilt]').forEach(bindTilt);
@@ -360,7 +377,7 @@
         await loadIndex();
         const hits = rank(q, d => d.s === 'News').slice(0, 60);
         grid.hidden = true; if (pag) pag.hidden = true; out.hidden = false;
-        out.innerHTML = hits.length ? hits.map(d => `<a class="news-card news-card--sm" href="${d.u}" data-tilt><span class="news-card__media"><img src="${esc(d.i || '')}" alt="" loading="lazy"></span><span class="news-card__body"><span class="news-card__date">${esc(d.d)}</span><span class="news-card__title">${esc(d.t)}</span></span><span class="news-card__glare" aria-hidden="true"></span></a>`).join('')
+        out.innerHTML = hits.length ? hits.map((d, k) => `<a class="news-card news-card--sm news-card--dealt" style="--k:${k}" href="${d.u}" data-tilt><span class="news-card__media"><img src="${esc(d.i || '')}" alt="" loading="lazy"></span><span class="news-card__body"><span class="news-card__date">${esc(d.d)}</span><span class="news-card__title">${esc(d.t)}</span></span><span class="news-card__glare" aria-hidden="true"></span></a>`).join('')
           : `<p class="news-results__empty">No stories match "${esc(q)}".</p>`;
         $$('[data-tilt]', out).forEach(bindTilt);
       }, 90);
